@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Viewing - Real Estate Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4ecca3;
+            text-decoration: none;
+        }
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: #4ecca3;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .back-link {
+            color: #4ecca3;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .page-header h1 {
+            color: #4ecca3;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .page-header p {
+            color: #888;
+        }
+        .property-summary {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        .property-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .property-info h3 {
+            color: #4ecca3;
+            margin-bottom: 0.5rem;
+        }
+        .property-info p {
+            color: #888;
+        }
+        .form-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .alert-error {
+            background: rgba(255, 82, 82, 0.2);
+            border: 1px solid #ff5252;
+            color: #ff5252;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #4ecca3;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #4ecca3;
+            color: #1a1a2e;
+        }
+        .btn-primary:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+        }
+        .info-box {
+            background: rgba(78, 204, 163, 0.1);
+            border: 1px solid #4ecca3;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: #4ecca3;
+        }
+        .info-box ul {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+        .info-box li {
+            margin-bottom: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">🏠 RealEstate Pro</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/properties">Properties</a>
+            <a href="/favorites">Favorites</a>
+            <a href="/viewings/my-viewings">My Viewings</a>
+            <a href="/auth/logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a th:href="@{/properties/{id}(id=${property.id})}" class="back-link">← Back to Property</a>
+
+        <div class="page-header">
+            <h1>📅 Request Property Viewing</h1>
+            <p>Schedule a time to view this property</p>
+        </div>
+
+        <!-- Property Summary -->
+        <div class="property-summary">
+            <div class="property-image">
+                <img th:if="${property.imageUrl != null && !property.imageUrl.isEmpty()}" 
+                     th:src="${property.imageUrl}" alt="Property">
+                <span th:if="${property.imageUrl == null || property.imageUrl.isEmpty()}" style="font-size: 3rem;">🏠</span>
+            </div>
+            <div class="property-info">
+                <h3 th:text="${property.title}">Property Title</h3>
+                <p th:text="${property.city + ', ' + property.state}">City, State</p>
+                <p style="color: #4ecca3; font-size: 1.2rem; font-weight: bold;">
+                    $<span th:text="${#numbers.formatDecimal(property.price, 0, 'COMMA', 0, 'POINT')}">250,000</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <!-- Error Message -->
+            <div th:if="${errorMessage}" class="alert alert-error">
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <!-- Information Box -->
+            <div class="info-box">
+                <strong>📌 Before requesting a viewing:</strong>
+                <ul>
+                    <li>Choose a date and time that works for you</li>
+                    <li>The property owner will review your request</li>
+                    <li>You'll be notified when your request is approved or rejected</li>
+                    <li>Include any specific requirements or questions in your message</li>
+                </ul>
+            </div>
+
+            <form th:action="@{/viewings/request/{id}(id=${property.id})}" method="post">
+                <div class="form-group">
+                    <label for="viewingDate">Preferred Date & Time *</label>
+                    <input type="datetime-local" 
+                           id="viewingDate" 
+                           name="viewingDate" 
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message to Owner (Optional)</label>
+                    <textarea id="message" 
+                              name="message" 
+                              placeholder="Include any questions or special requirements..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">📅 Submit Viewing Request</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Set minimum datetime to current time
+        document.addEventListener('DOMContentLoaded', function() {
+            var now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('viewingDate').min = now.toISOString().slice(0, 16);
+        });
+    </script>
+</body>
+</html>

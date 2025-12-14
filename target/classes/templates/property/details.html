@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${property.title} + ' - Real Estate'">Property Details</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: #4ecca3;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .back-link {
+            color: #4ecca3;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .property-header {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        .property-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: #888;
+        }
+        .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .property-main-info {
+            padding: 2rem;
+        }
+        .property-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        .tag-sale {
+            background: rgba(78, 204, 163, 0.2);
+            color: #4ecca3;
+        }
+        .tag-rent {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        .tag-type {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ccc;
+        }
+        .tag-status {
+            background: rgba(100, 100, 255, 0.2);
+            color: #aaf;
+        }
+        .property-price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4ecca3;
+            margin-bottom: 0.5rem;
+        }
+        .property-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .property-location {
+            color: #888;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        .property-features {
+            display: flex;
+            gap: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+        .feature {
+            text-align: center;
+        }
+        .feature-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+        .feature-label {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .property-details {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .property-details h2 {
+            color: #4ecca3;
+            margin-bottom: 1.5rem;
+        }
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+        }
+        .detail-label {
+            color: #888;
+        }
+        .detail-value {
+            font-weight: 500;
+        }
+        .property-description {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .property-description h2 {
+            color: #4ecca3;
+            margin-bottom: 1rem;
+        }
+        .property-description p {
+            color: #ccc;
+            line-height: 1.7;
+        }
+        .owner-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .owner-section h2 {
+            color: #4ecca3;
+            margin-bottom: 1rem;
+        }
+        .owner-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .owner-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #4ecca3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #1a1a2e;
+        }
+        .owner-details h3 {
+            margin-bottom: 0.25rem;
+        }
+        .owner-details p {
+            color: #888;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .btn-primary {
+            background: #4ecca3;
+            color: #1a1a2e;
+        }
+        .btn-primary:hover {
+            background: #3db892;
+        }
+        .btn-secondary {
+            background: rgba(78, 204, 163, 0.2);
+            color: #4ecca3;
+            border: 1px solid #4ecca3;
+        }
+        .btn-secondary:hover {
+            background: #4ecca3;
+            color: #1a1a2e;
+        }
+        .btn-danger {
+            background: rgba(255, 82, 82, 0.2);
+            color: #ff5252;
+            border: 1px solid #ff5252;
+        }
+        .btn-danger:hover {
+            background: #ff5252;
+            color: #fff;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .alert-success {
+            background: rgba(78, 204, 163, 0.2);
+            border: 1px solid #4ecca3;
+            color: #4ecca3;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">🏠 RealEstate Pro</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/properties">Properties</a>
+            <a th:if="${session.loggedInUser != null}" href="/dashboard">Dashboard</a>
+            <a th:if="${session.loggedInUser == null}" href="/auth/login">Login</a>
+            <a th:if="${session.loggedInUser != null}" href="/auth/logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="/properties" class="back-link">← Back to Properties</a>
+
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+
+        <div class="property-header">
+            <div class="property-image">
+                <img th:if="${property.imageUrl != null && !property.imageUrl.isEmpty()}" 
+                     th:src="${property.imageUrl}" 
+                     alt="Property Image">
+                <span th:if="${property.imageUrl == null || property.imageUrl.isEmpty()}">🏠</span>
+            </div>
+            <div class="property-main-info">
+                <div class="property-tags">
+                    <span class="tag" th:classappend="${property.listingType.name() == 'SALE'} ? 'tag-sale' : 'tag-rent'"
+                          th:text="${property.listingType.name() == 'SALE'} ? 'For Sale' : 'For Rent'">For Sale</span>
+                    <span class="tag tag-type" th:text="${property.propertyType}">House</span>
+                    <span class="tag tag-status" th:text="${property.status}">Approved</span>
+                </div>
+                <div class="property-price">
+                    $<span th:text="${#numbers.formatDecimal(property.price, 0, 'COMMA', 0, 'POINT')}"></span>
+                    <span th:if="${property.listingType.name() == 'RENT'}" style="font-size: 1rem; color: #888;">/month</span>
+                </div>
+                <h1 class="property-title" th:text="${property.title}">Property Title</h1>
+                <p class="property-location" th:text="${property.fullAddress}">Full Address</p>
+                
+                <div class="property-features">
+                    <div class="feature">
+                        <div class="feature-value" th:text="${property.bedrooms}">3</div>
+                        <div class="feature-label">Bedrooms</div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-value" th:text="${property.bathrooms}">2</div>
+                        <div class="feature-label">Bathrooms</div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-value" th:text="${property.areaSqft}">1500</div>
+                        <div class="feature-label">Sq Ft</div>
+                    </div>
+                    <div class="feature" th:if="${property.yearBuilt != null}">
+                        <div class="feature-value" th:text="${property.yearBuilt}">2020</div>
+                        <div class="feature-label">Year Built</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Property Details -->
+        <div class="property-details">
+            <h2>Property Details</h2>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Property Type</span>
+                    <span class="detail-value" th:text="${property.propertyType}">House</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Listing Type</span>
+                    <span class="detail-value" th:text="${property.listingType}">Sale</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Bedrooms</span>
+                    <span class="detail-value" th:text="${property.bedrooms}">3</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Bathrooms</span>
+                    <span class="detail-value" th:text="${property.bathrooms}">2</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Area</span>
+                    <span class="detail-value"><span th:text="${property.areaSqft}">1500</span> sq ft</span>
+                </div>
+                <div class="detail-item" th:if="${property.yearBuilt != null}">
+                    <span class="detail-label">Year Built</span>
+                    <span class="detail-value" th:text="${property.yearBuilt}">2020</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">City</span>
+                    <span class="detail-value" th:text="${property.city}">City</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">State</span>
+                    <span class="detail-value" th:text="${property.state}">State</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="property-description" th:if="${property.description != null && !property.description.isEmpty()}">
+            <h2>Description</h2>
+            <p th:text="${property.description}">Property description goes here...</p>
+        </div>
+
+        <!-- Owner Info -->
+        <div class="owner-section">
+            <h2>Listed By</h2>
+            <div class="owner-info">
+                <div class="owner-avatar" th:text="${property.owner.firstName.charAt(0)}">J</div>
+                <div class="owner-details">
+                    <h3 th:text="${property.owner.fullName}">Owner Name</h3>
+                    <p th:text="${property.owner.role}">OWNER</p>
+                </div>
+            </div>
+        </div>
+
+<!-- Action Buttons -->
+        <div class="action-buttons">
+            <!-- For logged in users who are NOT the owner -->
+            <th:block th:if="${session.loggedInUser != null && !isOwner}">
+                <a th:href="@{/viewings/request/{id}(id=${property.id})}" class="btn btn-primary">📅 Request Viewing</a>
+                
+                <!-- Favorite Button -->
+                <form th:if="${!isFavorited}" th:action="@{/favorites/add/{id}(id=${property.id})}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">🤍 Add to Favorites</button>
+                </form>
+                <form th:if="${isFavorited}" th:action="@{/favorites/remove/{id}(id=${property.id})}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">❤️ Remove from Favorites</button>
+                </form>
+                
+                <a th:href="@{/applications/submit/{id}(id=${property.id})}" class="btn btn-secondary">📝 Submit Application</a>
+            </th:block>
+
+            <!-- For the owner -->
+            <th:block th:if="${isOwner}">
+                <a th:href="@{/properties/{id}/edit(id=${property.id})}" class="btn btn-secondary">✏️ Edit Property</a>
+                <form th:action="@{/properties/{id}/delete(id=${property.id})}" method="post" style="display: inline;"
+                      onsubmit="return confirm('Are you sure you want to delete this property?');">
+                    <button type="submit" class="btn btn-danger">🗑️ Delete Property</button>
+                </form>
+            </th:block>
+
+            <!-- For non-logged in users -->
+            <th:block th:if="${session.loggedInUser == null}">
+                <a href="/auth/login" class="btn btn-primary">Login to Contact Owner</a>
+            </th:block>
+   </div>
+    </div>  <!-- ← ADD THIS LINE (closes .container div) -->
+</body>
+</html>

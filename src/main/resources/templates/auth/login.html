@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Real Estate Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        .login-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .logo h1 {
+            color: #4ecca3;
+            font-size: 1.75rem;
+        }
+        .logo p {
+            color: #ccc;
+            margin-top: 0.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        label {
+            display: block;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        label.required::after {
+            content: " *";
+            color: #ff5252;
+        }
+        input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #4ecca3;
+        }
+        input::placeholder {
+            color: #888;
+        }
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+        .btn-primary {
+            background: #4ecca3;
+            color: #1a1a2e;
+        }
+        .btn-primary:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+        }
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #ccc;
+        }
+        .register-link a {
+            color: #4ecca3;
+            text-decoration: none;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        .home-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .home-link a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .home-link a:hover {
+            color: #4ecca3;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .alert-error {
+            background: rgba(255, 82, 82, 0.2);
+            border: 1px solid #ff5252;
+            color: #ff5252;
+        }
+        .alert-success {
+            background: rgba(78, 204, 163, 0.2);
+            border: 1px solid #4ecca3;
+            color: #4ecca3;
+        }
+        .helper-text {
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>🏠 RealEstate Pro</h1>
+            <p>Welcome back!</p>
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+
+        <form th:action="@{/auth/login}" method="post">
+            <div class="form-group">
+                <label for="email" class="required">Email Address</label>
+                <input type="email" 
+                       id="email" 
+                       name="email" 
+                       placeholder="yourname@gmail.com" 
+                       required
+                       pattern="[a-zA-Z0-9._%+\-]+@gmail\.com$"
+                       title="Only Gmail addresses are allowed"
+                       autofocus>
+                <small class="helper-text">Only Gmail addresses (@gmail.com) are accepted</small>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="required">Password</label>
+                <input type="password" 
+                       id="password" 
+                       name="password" 
+                       placeholder="Your password" 
+                       required
+                       minlength="6">
+                <small class="helper-text">Minimum 6 characters</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+
+        <div class="register-link">
+            Don't have an account? <a href="/auth/register">Register here</a>
+        </div>
+
+        <div class="home-link">
+            <a href="/">← Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const email = document.getElementById('email').value.toLowerCase();
+            
+            if (!email.endsWith('@gmail.com')) {
+                e.preventDefault();
+                alert('⚠️ Only Gmail addresses (@gmail.com) are allowed!');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>

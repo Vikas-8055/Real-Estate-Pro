@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Real Estate Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: #4ecca3;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .welcome-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .welcome-section h1 {
+            color: #4ecca3;
+            margin-bottom: 0.5rem;
+        }
+        .welcome-section p {
+            color: #ccc;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(78, 204, 163, 0.2);
+        }
+        .stat-card h3 {
+            color: #4ecca3;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card p {
+            color: #ccc;
+        }
+        .quick-actions {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        .quick-actions h2 {
+            color: #4ecca3;
+            margin-bottom: 1.5rem;
+        }
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .action-btn {
+            padding: 1rem 2rem;
+            background: rgba(78, 204, 163, 0.2);
+            border: 1px solid #4ecca3;
+            border-radius: 8px;
+            color: #4ecca3;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        .action-btn:hover {
+            background: #4ecca3;
+            color: #1a1a2e;
+            transform: translateY(-2px);
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .alert-success {
+            background: rgba(78, 204, 163, 0.2);
+            border: 1px solid #4ecca3;
+            color: #4ecca3;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">🏠 RealEstate Pro</div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/properties">Properties</a>
+            <a href="/favorites">Favorites</a>
+            
+            <!-- Owner/Agent specific links -->
+            <a th:if="${session.userRole == 'OWNER' || session.userRole == 'AGENT'}" href="/properties/my-properties">My Properties</a>
+            <a th:if="${session.userRole == 'OWNER' || session.userRole == 'AGENT'}" href="/viewings/requests">Viewing Requests</a>
+            <a th:if="${session.userRole == 'OWNER' || session.userRole == 'AGENT'}" href="/applications/received">Applications</a>
+            
+            <!-- Buyer/Renter specific links -->
+            <a th:if="${session.userRole == 'BUYER' || session.userRole == 'RENTER'}" href="/viewings/my-viewings">My Viewings</a>
+            <a th:if="${session.userRole == 'BUYER' || session.userRole == 'RENTER'}" href="/applications/my-applications">My Applications</a>
+            
+            <a href="/auth/logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+
+        <div class="welcome-section">
+            <h1>Welcome, <span th:text="${session.loggedInUser?.firstName}">User</span>!</h1>
+            <p>Role: <span th:text="${session.userRole}">USER</span></p>
+        </div>
+
+        <div class="stats-grid">
+            <!-- For Owners/Agents: Show Properties Listed -->
+            <div class="stat-card" th:if="${session.userRole == 'OWNER' || session.userRole == 'AGENT'}">
+                <h3 th:text="${propertyCount}">0</h3>
+                <p>Properties Listed</p>
+            </div>
+
+            <!-- For Buyers/Renters: Show Favorites -->
+            <div class="stat-card" th:if="${session.userRole == 'BUYER' || session.userRole == 'RENTER'}">
+                <h3 th:text="${favoritesCount}">0</h3>
+                <p>Favorites</p>
+            </div>
+
+            <!-- Viewing Requests (for all users) -->
+            <div class="stat-card">
+                <h3 th:text="${viewingRequestsCount}">0</h3>
+                <p th:if="${session.userRole == 'OWNER' || session.userRole == 'AGENT'}">Pending Viewing Requests</p>
+                <p th:if="${session.userRole == 'BUYER' || session.userRole == 'RENTER'}">My Viewing Requests</p>
+            </div>
+
+            <!-- Applications (for all users) -->
+            <div class="stat-card">
+                <h3 th:text="${applicationsCount}">0</h3>
+                <p th:if="${session.userRole == 'OWNER' || session.userRole == 'AGENT'}">Pending Applications</p>
+                <p th:if="${session.userRole == 'BUYER' || session.userRole == 'RENTER'}">My Applications</p>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <h2>Quick Actions</h2>
+            <div class="action-buttons">
+                <!-- Common actions for all users -->
+                <a href="/properties" class="action-btn">🔍 Browse Properties</a>
+                <a href="/favorites" class="action-btn">❤️ View Favorites</a>
+                
+                <!-- Owner/Agent specific actions -->
+                <th:block th:if="${session.userRole == 'OWNER' || session.userRole == 'AGENT'}">
+                    <a href="/properties/new" class="action-btn">➕ List a Property</a>
+                    <a href="/properties/my-properties" class="action-btn">🏠 My Properties</a>
+                    <a href="/viewings/requests" class="action-btn">📅 Viewing Requests</a>
+                    <a href="/applications/received" class="action-btn">📝 Applications Received</a>
+                </th:block>
+                
+                <!-- Buyer/Renter specific actions -->
+                <th:block th:if="${session.userRole == 'BUYER' || session.userRole == 'RENTER'}">
+                    <a href="/viewings/my-viewings" class="action-btn">📅 My Viewings</a>
+                    <a href="/applications/my-applications" class="action-btn">📝 My Applications</a>
+                </th:block>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

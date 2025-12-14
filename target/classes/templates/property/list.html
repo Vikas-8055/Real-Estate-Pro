@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Properties - Real Estate Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: #4ecca3;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .page-header h1 {
+            color: #4ecca3;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: #4ecca3;
+            color: #1a1a2e;
+        }
+        .btn-primary:hover {
+            background: #3db892;
+        }
+        .search-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        .form-group input,
+        .form-group select {
+            padding: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 0.9rem;
+        }
+        .form-group select option {
+            background: #1a1a2e;
+        }
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .property-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        .property-card:hover {
+            transform: translateY(-5px);
+        }
+        .property-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 3rem;
+        }
+        .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .property-info {
+            padding: 1.5rem;
+        }
+        .property-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4ecca3;
+            margin-bottom: 0.5rem;
+        }
+        .property-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        .property-location {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .property-features {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        .property-features span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .property-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        .tag-sale {
+            background: rgba(78, 204, 163, 0.2);
+            color: #4ecca3;
+        }
+        .tag-rent {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        .tag-type {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ccc;
+        }
+        .btn-view {
+            display: block;
+            text-align: center;
+            padding: 0.75rem;
+            background: rgba(78, 204, 163, 0.2);
+            color: #4ecca3;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .btn-view:hover {
+            background: #4ecca3;
+            color: #1a1a2e;
+        }
+        .no-properties {
+            text-align: center;
+            padding: 3rem;
+            color: #888;
+        }
+        .no-properties h3 {
+            margin-bottom: 1rem;
+            color: #ccc;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .alert-success {
+            background: rgba(78, 204, 163, 0.2);
+            border: 1px solid #4ecca3;
+            color: #4ecca3;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">🏠 RealEstate Pro</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/properties">Properties</a>
+            <a th:if="${session.loggedInUser != null}" href="/dashboard">Dashboard</a>
+            <a th:if="${session.loggedInUser != null}" href="/properties/my-properties">My Properties</a>
+            <a th:if="${session.loggedInUser == null}" href="/auth/login">Login</a>
+            <a th:if="${session.loggedInUser != null}" href="/auth/logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Browse Properties</h1>
+            <a th:if="${session.loggedInUser != null}" href="/properties/new" class="btn btn-primary">+ List Property</a>
+        </div>
+
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <form th:action="@{/properties/search}" method="get" class="search-form">
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" th:value="${searchCity}" placeholder="Enter city">
+                </div>
+                <div class="form-group">
+                    <label for="propertyType">Property Type</label>
+                    <select id="propertyType" name="propertyType">
+                        <option value="">All Types</option>
+                        <option th:each="type : ${propertyTypes}" 
+                                th:value="${type}" 
+                                th:text="${type}"
+                                th:selected="${type.name() == searchPropertyType}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="listingType">Listing Type</label>
+                    <select id="listingType" name="listingType">
+                        <option value="">All</option>
+                        <option value="SALE" th:selected="${searchListingType == 'SALE'}">For Sale</option>
+                        <option value="RENT" th:selected="${searchListingType == 'RENT'}">For Rent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="minPrice">Min Price</label>
+                    <input type="number" id="minPrice" name="minPrice" th:value="${searchMinPrice}" placeholder="Min">
+                </div>
+                <div class="form-group">
+                    <label for="maxPrice">Max Price</label>
+                    <input type="number" id="maxPrice" name="maxPrice" th:value="${searchMaxPrice}" placeholder="Max">
+                </div>
+                <div class="form-group">
+                    <label for="bedrooms">Bedrooms</label>
+                    <select id="bedrooms" name="bedrooms">
+                        <option value="">Any</option>
+                        <option value="1" th:selected="${searchBedrooms == 1}">1+</option>
+                        <option value="2" th:selected="${searchBedrooms == 2}">2+</option>
+                        <option value="3" th:selected="${searchBedrooms == 3}">3+</option>
+                        <option value="4" th:selected="${searchBedrooms == 4}">4+</option>
+                        <option value="5" th:selected="${searchBedrooms == 5}">5+</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Properties Grid -->
+        <div th:if="${properties != null && !properties.isEmpty()}" class="properties-grid">
+            <div th:each="property : ${properties}" class="property-card">
+                <div class="property-image">
+                    <img th:if="${property.imageUrl != null && !property.imageUrl.isEmpty()}" 
+                         th:src="${property.imageUrl}" 
+                         alt="Property Image">
+                    <span th:if="${property.imageUrl == null || property.imageUrl.isEmpty()}">🏠</span>
+                </div>
+                <div class="property-info">
+                    <div class="property-price">
+                        $<span th:text="${#numbers.formatDecimal(property.price, 0, 'COMMA', 0, 'POINT')}"></span>
+                        <span th:if="${property.listingType.name() == 'RENT'}" style="font-size: 0.8rem; color: #888;">/month</span>
+                    </div>
+                    <div class="property-title" th:text="${property.title}">Property Title</div>
+                    <div class="property-location" th:text="${property.city + ', ' + property.state}">City, State</div>
+                    <div class="property-features">
+                        <span>🛏️ <span th:text="${property.bedrooms}">3</span> beds</span>
+                        <span>🛁 <span th:text="${property.bathrooms}">2</span> baths</span>
+                        <span>📐 <span th:text="${property.areaSqft}">1500</span> sqft</span>
+                    </div>
+                    <div class="property-tags">
+                        <span class="tag" th:classappend="${property.listingType.name() == 'SALE'} ? 'tag-sale' : 'tag-rent'"
+                              th:text="${property.listingType.name() == 'SALE'} ? 'For Sale' : 'For Rent'">For Sale</span>
+                        <span class="tag tag-type" th:text="${property.propertyType}">House</span>
+                    </div>
+                    <a th:href="@{/properties/{id}(id=${property.id})}" class="btn-view">View Details</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Properties Message -->
+        <div th:if="${properties == null || properties.isEmpty()}" class="no-properties">
+            <h3>No properties found</h3>
+            <p>Try adjusting your search filters or check back later.</p>
+        </div>
+    </div>
+</body>
+</html>

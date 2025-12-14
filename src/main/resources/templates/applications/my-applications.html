@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Applications - Real Estate Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4ecca3;
+            text-decoration: none;
+        }
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: #4ecca3;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        .page-header h1 {
+            color: #4ecca3;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .page-header p {
+            color: #888;
+            font-size: 1.1rem;
+        }
+        .stats {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+        .stats-text {
+            color: #4ecca3;
+            font-size: 1.1rem;
+        }
+        .stats-number {
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .alert-success {
+            background: rgba(78, 204, 163, 0.2);
+            border: 1px solid #4ecca3;
+            color: #4ecca3;
+        }
+        .alert-error {
+            background: rgba(255, 82, 82, 0.2);
+            border: 1px solid #ff5252;
+            color: #ff5252;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .section-header {
+            margin-bottom: 1.5rem;
+        }
+        .section-header h2 {
+            color: #4ecca3;
+        }
+        .application-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1.5rem;
+        }
+        .app-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .app-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .app-details {
+            flex: 1;
+        }
+        .property-title {
+            color: #4ecca3;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        .property-location {
+            color: #888;
+            margin-bottom: 1rem;
+        }
+        .app-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .info-item {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .info-label {
+            color: #888;
+        }
+        .info-value {
+            color: #fff;
+            font-weight: 500;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid #ffc107;
+        }
+        .status-under-review {
+            background: rgba(100, 100, 255, 0.2);
+            color: #aaf;
+            border: 1px solid #aaf;
+        }
+        .status-approved {
+            background: rgba(78, 204, 163, 0.2);
+            color: #4ecca3;
+            border: 1px solid #4ecca3;
+        }
+        .status-rejected {
+            background: rgba(255, 82, 82, 0.2);
+            color: #ff5252;
+            border: 1px solid #ff5252;
+        }
+        .status-withdrawn {
+            background: rgba(150, 150, 150, 0.2);
+            color: #999;
+            border: 1px solid #999;
+        }
+        .type-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+        .type-purchase {
+            background: rgba(78, 204, 163, 0.2);
+            color: #4ecca3;
+        }
+        .type-rental {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-view {
+            background: rgba(78, 204, 163, 0.2);
+            color: #4ecca3;
+            border: 1px solid #4ecca3;
+        }
+        .btn-view:hover {
+            background: #4ecca3;
+            color: #1a1a2e;
+        }
+        .btn-withdraw {
+            background: rgba(255, 82, 82, 0.2);
+            color: #ff5252;
+            border: 1px solid #ff5252;
+        }
+        .btn-withdraw:hover {
+            background: #ff5252;
+            color: #fff;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #888;
+        }
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .empty-state h3 {
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        .btn-browse {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: #4ecca3;
+            color: #1a1a2e;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .btn-browse:hover {
+            background: #3db892;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">🏠 RealEstate Pro</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/properties">Properties</a>
+            <a href="/favorites">Favorites</a>
+            <a href="/applications/my-applications">My Applications</a>
+            <a href="/auth/logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>📝 My Applications</h1>
+            <p>Track your property applications and their status</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <span class="stats-text">Total Applications: <span class="stats-number" th:text="${applicationCount}">0</span></span>
+        </div>
+
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Applications Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>📋 All Applications</h2>
+            </div>
+
+            <div th:if="${applications != null && !applications.isEmpty()}">
+                <div th:each="app : ${applications}" class="application-card">
+                    <div class="app-image">
+                        <img th:if="${app.property.imageUrl != null && !app.property.imageUrl.isEmpty()}" 
+                             th:src="${app.property.imageUrl}" alt="Property">
+                        <span th:if="${app.property.imageUrl == null || app.property.imageUrl.isEmpty()}" style="font-size: 3rem;">🏠</span>
+                    </div>
+                    <div class="app-details">
+                        <span class="type-badge" 
+                              th:classappend="${app.applicationType.name() == 'PURCHASE'} ? 'type-purchase' : 'type-rental'"
+                              th:text="${app.applicationType.name() == 'PURCHASE'} ? 'Purchase Application' : 'Rental Application'">Purchase</span>
+                        
+                        <h3 class="property-title" th:text="${app.property.title}">Property Title</h3>
+                        <p class="property-location">📍 <span th:text="${app.property.city + ', ' + app.property.state}">City, State</span></p>
+                        
+                        <div class="app-info">
+                            <div class="info-item">
+                                <span class="info-label">Submitted:</span>
+                                <span class="info-value" th:text="${#temporals.format(app.createdAt, 'MMM dd, yyyy')}">Dec 1, 2024</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Status:</span>
+                                <span class="status-badge" 
+                                      th:classappend="${app.status.name() == 'PENDING'} ? 'status-pending' : 
+                                                       (${app.status.name() == 'UNDER_REVIEW'} ? 'status-under-review' : 
+                                                       (${app.status.name() == 'APPROVED'} ? 'status-approved' : 
+                                                       (${app.status.name() == 'REJECTED'} ? 'status-rejected' : 'status-withdrawn')))"
+                                      th:text="${app.status}">Status</span>
+                            </div>
+                            <div class="info-item" th:if="${app.moveInDate != null}">
+                                <span class="info-label">Move-in Date:</span>
+                                <span class="info-value" th:text="${#temporals.format(app.moveInDate, 'MMM dd, yyyy')}">Jan 1, 2025</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Property Price:</span>
+                                <span class="info-value">$<span th:text="${#numbers.formatDecimal(app.property.price, 0, 'COMMA', 0, 'POINT')}">250,000</span></span>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <a th:href="@{/properties/{id}(id=${app.property.id})}" class="btn btn-view">View Property</a>
+                            <form th:if="${app.status.name() == 'PENDING' || app.status.name() == 'UNDER_REVIEW'}" 
+                                  th:action="@{/applications/{id}/withdraw(id=${app.id})}" 
+                                  method="post" 
+                                  style="display: inline;">
+                                <button type="submit" 
+                                        class="btn btn-withdraw" 
+                                        onclick="return confirm('Are you sure you want to withdraw this application?');">
+                                    Withdraw Application
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${applications == null || applications.isEmpty()}" class="empty-state">
+                <div class="empty-state-icon">📝</div>
+                <h3>No Applications Yet</h3>
+                <p>Start applying for properties you're interested in!</p>
+                <a href="/properties" class="btn-browse">Browse Properties</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

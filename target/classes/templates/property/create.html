@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Property - Real Estate Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: #4ecca3;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .back-link {
+            color: #4ecca3;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .form-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        .form-container h1 {
+            color: #4ecca3;
+            margin-bottom: 0.5rem;
+        }
+        .form-container p {
+            color: #888;
+            margin-bottom: 2rem;
+        }
+        .form-section {
+            margin-bottom: 2rem;
+        }
+        .form-section h3 {
+            color: #4ecca3;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        label {
+            display: block;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4ecca3;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #888;
+        }
+        select option {
+            background: #1a1a2e;
+            color: #fff;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #4ecca3;
+            color: #1a1a2e;
+            width: 100%;
+        }
+        .btn-primary:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .alert-error {
+            background: rgba(255, 82, 82, 0.2);
+            border: 1px solid #ff5252;
+            color: #ff5252;
+        }
+        .error-text {
+            color: #ff5252;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+        .info-text {
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">🏠 RealEstate Pro</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/properties">Properties</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/auth/logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="/properties" class="back-link">← Back to Properties</a>
+
+        <div class="form-container">
+            <h1>List Your Property</h1>
+            <p>Fill in the details below to list your property</p>
+
+            <!-- Error Message -->
+            <div th:if="${errorMessage}" class="alert alert-error">
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <form th:action="@{/properties/new}" th:object="${property}" method="post">
+                
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h3>Basic Information</h3>
+                    
+                    <div class="form-group">
+                        <label for="title">Property Title *</label>
+                        <input type="text" id="title" th:field="*{title}" placeholder="e.g., Beautiful 3-Bedroom House" required>
+                        <div th:if="${#fields.hasErrors('title')}" class="error-text">
+                            <span th:errors="*{title}"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="propertyType">Property Type *</label>
+                            <select id="propertyType" th:field="*{propertyType}" required>
+                                <option value="">Select Type</option>
+                                <option th:each="type : ${propertyTypes}" th:value="${type}" th:text="${type}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="listingType">Listing Type *</label>
+                            <select id="listingType" th:field="*{listingType}" required>
+                                <option value="">Select Listing Type</option>
+                                <option th:each="type : ${listingTypes}" th:value="${type}" th:text="${type}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price">Price ($) *</label>
+                        <input type="number" id="price" th:field="*{price}" placeholder="e.g., 250000" min="0" step="0.01" required>
+                        <div class="info-text">For rentals, enter monthly rent</div>
+                        <div th:if="${#fields.hasErrors('price')}" class="error-text">
+                            <span th:errors="*{price}"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" th:field="*{description}" placeholder="Describe your property..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Location -->
+                <div class="form-section">
+                    <h3>Location</h3>
+                    
+                    <div class="form-group">
+                        <label for="address">Street Address *</label>
+                        <input type="text" id="address" th:field="*{address}" placeholder="e.g., 123 Main Street" required>
+                        <div th:if="${#fields.hasErrors('address')}" class="error-text">
+                            <span th:errors="*{address}"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label for="city">City *</label>
+                            <input type="text" id="city" th:field="*{city}" placeholder="e.g., Boston" required>
+                            <div th:if="${#fields.hasErrors('city')}" class="error-text">
+                                <span th:errors="*{city}"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State *</label>
+                            <input type="text" id="state" th:field="*{state}" placeholder="e.g., MA" required>
+                            <div th:if="${#fields.hasErrors('state')}" class="error-text">
+                                <span th:errors="*{state}"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="zipCode">Zip Code *</label>
+                            <input type="text" id="zipCode" th:field="*{zipCode}" placeholder="e.g., 02101" required>
+                            <div th:if="${#fields.hasErrors('zipCode')}" class="error-text">
+                                <span th:errors="*{zipCode}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property Details -->
+                <div class="form-section">
+                    <h3>Property Details</h3>
+                    
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label for="bedrooms">Bedrooms</label>
+                            <input type="number" id="bedrooms" th:field="*{bedrooms}" placeholder="3" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="bathrooms">Bathrooms</label>
+                            <input type="number" id="bathrooms" th:field="*{bathrooms}" placeholder="2" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="areaSqft">Area (sq ft)</label>
+                            <input type="number" id="areaSqft" th:field="*{areaSqft}" placeholder="1500" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="yearBuilt">Year Built</label>
+                            <input type="number" id="yearBuilt" th:field="*{yearBuilt}" placeholder="2020" min="1800" max="2025">
+                        </div>
+                        <div class="form-group">
+                            <label for="imageUrl">Image URL</label>
+                            <input type="url" id="imageUrl" th:field="*{imageUrl}" placeholder="https://example.com/image.jpg">
+                            <div class="info-text">Paste a URL to your property image</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">📋 List Property</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

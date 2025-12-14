@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Real Estate Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        .register-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .logo h1 {
+            color: #4ecca3;
+            font-size: 1.75rem;
+        }
+        .logo p {
+            color: #ccc;
+            margin-top: 0.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        label {
+            display: block;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        label.required::after {
+            content: " *";
+            color: #ff5252;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4ecca3;
+        }
+        input::placeholder {
+            color: #888;
+        }
+        select option {
+            background: #1a1a2e;
+            color: #fff;
+        }
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+        .btn-primary {
+            background: #4ecca3;
+            color: #1a1a2e;
+        }
+        .btn-primary:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #ccc;
+        }
+        .login-link a {
+            color: #4ecca3;
+            text-decoration: none;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        .home-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .home-link a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .home-link a:hover {
+            color: #4ecca3;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .alert-error {
+            background: rgba(255, 82, 82, 0.2);
+            border: 1px solid #ff5252;
+            color: #ff5252;
+        }
+        .alert-success {
+            background: rgba(78, 204, 163, 0.2);
+            border: 1px solid #4ecca3;
+            color: #4ecca3;
+        }
+        .error-text {
+            color: #ff5252;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+        .helper-text {
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="logo">
+            <h1>🏠 RealEstate Pro</h1>
+            <p>Create your account</p>
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+
+        <form th:action="@{/auth/register}" th:object="${user}" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName" class="required">First Name</label>
+                    <input type="text" 
+                           id="firstName" 
+                           th:field="*{firstName}" 
+                           placeholder="John" 
+                           required
+                           minlength="2"
+                           maxlength="50"
+                           pattern="[A-Za-z\s]+">
+                    <div th:if="${#fields.hasErrors('firstName')}" class="error-text">
+                        <span th:errors="*{firstName}"></span>
+                    </div>
+                    <small class="helper-text">Letters only, 2-50 characters</small>
+                </div>
+                <div class="form-group">
+                    <label for="lastName" class="required">Last Name</label>
+                    <input type="text" 
+                           id="lastName" 
+                           th:field="*{lastName}" 
+                           placeholder="Doe" 
+                           required
+                           minlength="2"
+                           maxlength="50"
+                           pattern="[A-Za-z\s]+">
+                    <div th:if="${#fields.hasErrors('lastName')}" class="error-text">
+                        <span th:errors="*{lastName}"></span>
+                    </div>
+                    <small class="helper-text">Letters only, 2-50 characters</small>
+                </div>
+            </div>
+
+            <div class="form-group">
+    <label for="email" class="required">Email Address</label>
+    <input type="email" 
+           id="email" 
+           th:field="*{email}" 
+           placeholder="yourname@gmail.com" 
+           required
+           pattern="[a-zA-Z0-9._%+\-]+@gmail\.com$"
+           title="Only Gmail addresses are allowed (e.g., user@gmail.com)">
+    <div th:if="${#fields.hasErrors('email')}" class="error-text">
+        <span th:errors="*{email}"></span>
+    </div>
+    <small class="helper-text">Only Gmail addresses (@gmail.com) are accepted</small>
+</div>
+
+            <div class="form-group">
+                <label for="phone" class="required">Phone Number</label>
+                <input type="tel" 
+                       id="phone" 
+                       th:field="*{phone}" 
+                       placeholder="1234567890" 
+                       required
+                       pattern="[0-9]{10,15}"
+                       minlength="10"
+                       maxlength="15">
+                <div th:if="${#fields.hasErrors('phone')}" class="error-text">
+                    <span th:errors="*{phone}"></span>
+                </div>
+                <small class="helper-text">Enter 10-15 digits (no spaces or dashes)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="required">Password</label>
+                <input type="password" 
+                       id="password" 
+                       th:field="*{password}" 
+                       placeholder="Minimum 6 characters" 
+                       required
+                       minlength="6"
+                       maxlength="50">
+                <div th:if="${#fields.hasErrors('password')}" class="error-text">
+                    <span th:errors="*{password}"></span>
+                </div>
+                <small class="helper-text">Must be at least 6 characters</small>
+            </div>
+
+            <div class="form-group">
+                <label for="role" class="required">I am a</label>
+                <select id="role" th:field="*{role}" required>
+                    <option value="">Select your role</option>
+                    <option value="BUYER">Buyer</option>
+                    <option value="RENTER">Renter</option>
+                    <option value="OWNER">Property Owner</option>
+                    <option value="AGENT">Real Estate Agent</option>
+                    <option value="ADMIN">Administrator</option>
+                </select>
+                <div th:if="${#fields.hasErrors('role')}" class="error-text">
+                    <span th:errors="*{role}"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create Account</button>
+        </form>
+
+        <div class="login-link">
+            Already have an account? <a href="/auth/login">Login here</a>
+        </div>
+
+        <div class="home-link">
+            <a href="/">← Back to Home</a>
+        </div>
+    </div>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const email = document.getElementById('email').value.toLowerCase();
+            
+            if (!email.endsWith('@gmail.com')) {
+                e.preventDefault();
+                alert('⚠️ Only Gmail addresses (@gmail.com) are allowed!');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>

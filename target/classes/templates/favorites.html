@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Favorites - Real Estate Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4ecca3;
+            text-decoration: none;
+        }
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: #4ecca3;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        .page-header h1 {
+            color: #4ecca3;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .page-header p {
+            color: #888;
+            font-size: 1.1rem;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .alert-success {
+            background: rgba(78, 204, 163, 0.2);
+            border: 1px solid #4ecca3;
+            color: #4ecca3;
+        }
+        .alert-error {
+            background: rgba(255, 82, 82, 0.2);
+            border: 1px solid #ff5252;
+            color: #ff5252;
+        }
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        .property-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(78, 204, 163, 0.2);
+        }
+        .property-image {
+            width: 100%;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .property-icon {
+            font-size: 3rem;
+        }
+        .property-body {
+            padding: 1.5rem;
+        }
+        .property-title {
+            color: #4ecca3;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        .property-location {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .property-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+        }
+        .detail-item {
+            text-align: center;
+        }
+        .detail-label {
+            color: #888;
+            font-size: 0.8rem;
+        }
+        .detail-value {
+            color: #fff;
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+        .property-price {
+            font-size: 1.8rem;
+            color: #4ecca3;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        .property-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(78, 204, 163, 0.2);
+            color: #4ecca3;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .btn {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-view {
+            background: rgba(78, 204, 163, 0.2);
+            color: #4ecca3;
+            border: 1px solid #4ecca3;
+        }
+        .btn-view:hover {
+            background: #4ecca3;
+            color: #1a1a2e;
+        }
+        .btn-remove {
+            background: rgba(255, 82, 82, 0.2);
+            color: #ff5252;
+            border: 1px solid #ff5252;
+        }
+        .btn-remove:hover {
+            background: #ff5252;
+            color: #fff;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #888;
+        }
+        .empty-state-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+        .empty-state h2 {
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+        .empty-state p {
+            margin-bottom: 2rem;
+        }
+        .btn-browse {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #4ecca3;
+            color: #1a1a2e;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-browse:hover {
+            background: #3db892;
+            transform: translateY(-2px);
+        }
+        .stats {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+        .stats-text {
+            color: #4ecca3;
+            font-size: 1.1rem;
+        }
+        .stats-number {
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">🏠 RealEstate Pro</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/properties">Properties</a>
+            <a href="/favorites">Favorites</a>
+            <a href="/properties/my-properties">My Listings</a>
+            <a href="/auth/logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>❤️ My Favorites</h1>
+            <p>Properties you've saved for later</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <span class="stats-text">Total Favorites: <span class="stats-number" th:text="${favoriteCount}">0</span></span>
+        </div>
+
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Properties Grid -->
+        <div th:if="${favorites != null && !favorites.isEmpty()}" class="properties-grid">
+            <div th:each="property : ${favorites}" class="property-card">
+                <div class="property-image">
+                    <img th:if="${property.imageUrl != null && !property.imageUrl.isEmpty()}" 
+                         th:src="${property.imageUrl}" alt="Property">
+                    <span class="property-icon" th:if="${property.imageUrl == null || property.imageUrl.isEmpty()}">🏠</span>
+                </div>
+                <div class="property-body">
+                    <h3 class="property-title" th:text="${property.title}">Property Title</h3>
+                    <p class="property-location">📍 <span th:text="${property.city + ', ' + property.state}">City, State</span></p>
+                    
+                    <div class="property-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Bedrooms</div>
+                            <div class="detail-value" th:text="${property.bedrooms}">3</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Bathrooms</div>
+                            <div class="detail-value" th:text="${property.bathrooms}">2</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Area</div>
+                            <div class="detail-value" th:text="${property.areaSize + ' sqft'}">1500</div>
+                        </div>
+                    </div>
+
+                    <div class="property-type" th:text="${property.listingType}">SALE</div>
+
+                    <div class="property-price">
+                        $<span th:text="${#numbers.formatDecimal(property.price, 0, 'COMMA', 0, 'POINT')}">250,000</span>
+                    </div>
+
+                    <div class="action-buttons">
+                        <a th:href="@{/properties/{id}(id=${property.id})}" class="btn btn-view">View Details</a>
+                        <form th:action="@{/favorites/remove/{id}(id=${property.id})}" method="post" style="flex: 1;">
+                            <button type="submit" class="btn btn-remove" style="width: 100%;">💔 Remove</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${favorites == null || favorites.isEmpty()}" class="empty-state">
+            <div class="empty-state-icon">💔</div>
+            <h2>No Favorites Yet</h2>
+            <p>Start exploring properties and save your favorites!</p>
+            <a href="/properties" class="btn-browse">Browse Properties</a>
+        </div>
+    </div>
+</body>
+</html>
